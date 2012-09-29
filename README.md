@@ -1,17 +1,7 @@
 ITM411
 ======
 
-ITM 411 Intermediate Software Development (Completed Assignment Repository)
-
-Fall 2012 T 6:25-9:05 PM Main Campus PH 131/Internet
-
-The course covers a broad spectrum of object-oriented programming concepts utilizing
-the Java Standard Edition platform. Employing the latest software development kit, the
-student considers software development topics in data structures, stream I/O, serialization,
-concurrency and graphical clients. Software engineering topics including packaging,
-deployment, debugging and unit testing are covered as well. Hands-on exercises
-reinforce concepts gained throughout the course. A final project integrates course topics
-into a contemporary desktop client application.
+This repository contains all assignment source created while attending ITM411, Intermediate Software Development, at the Illnoise Institute of Technology during the fall semester of 2012.  Per the syllabus, "this course covers a broad spectrum of object-oriented programming concepts utilizing the Java Standard Edition platform. Employing the latest software development kit, the student considers software development topics in data structures, stream I/O, serialization, concurrency and graphical clients. Software engineering topics including packaging, deployment, debugging and unit testing are covered as well. Hands-on exercises reinforce concepts gained throughout the course. A final project integrates course topics into a contemporary desktop client application."
 
 Brady Houseknecht
 
