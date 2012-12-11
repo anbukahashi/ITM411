@@ -114,17 +114,17 @@ public class FrmMain extends  Applet implements ActionListener  {
         //JFrame contentFrame = new JFrame("FMP");
         //contentFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
-        CtrlGrid grid = new CtrlGrid(this.m_obj_data.getDataRows(), 
-        		this.m_obj_data.getHeaderRow());
-        
-    	grid.setOpaque(true); 
+       /* CtrlGrid grid = new CtrlGrid(this.m_obj_data.getDataRows(), 
+        *		this.m_obj_data.getHeaderRow());
+        */
+    	//grid.setOpaque(true); 
     	//content panes must be opaque         
     	//contentFrame.setContentPane(grid);           
     	//Display the window.         
     	//contentFrame.pack();         
     	//contentFrame.setVisible(true);
     	
-    	this.add(grid);
+    	//this.add(grid);
     	
         
             

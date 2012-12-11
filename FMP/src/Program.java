@@ -9,6 +9,9 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.JApplet;
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.TableColumn;
 
 import ui.CtrlGrid;
 import ui.FrmMain;
@@ -38,12 +41,12 @@ public class Program extends JApplet implements ActionListener, Runnable
         mp2.PersistentObject recs;
         System.out.println("parsing CSV...");
         mp2.PersistentObject persistentObject = 
-                new mp2.PersistentObject("C:\\CHProjects\\Code\\Java\\itm411\\FMP\\data\\NST_EST2011_ALLDATA.csv");
+                new mp2.PersistentObject("C:\\Code\\Java\\itm411\\FMP\\data\\NST_EST2011_ALLDATA.csv");
       
        FileOutputStream fileOut;
         try 
         {
-            fileOut = new FileOutputStream("C:\\CHProjects\\Code\\Java\\itm411\\FMP\\data\\population-record.ser");
+            fileOut = new FileOutputStream("C:\\Code\\Java\\itm411\\FMP\\data\\population-record.ser");
             ObjectOutputStream out =
                               new ObjectOutputStream(fileOut);
            out.writeObject(persistentObject);
@@ -68,7 +71,7 @@ public class Program extends JApplet implements ActionListener, Runnable
         try 
         {
             FileInputStream fileIn =
-                          new FileInputStream("C:\\CHProjects\\Code\\Java\\itm411\\FMP\\data\\population-record.ser");
+                          new FileInputStream("C:\\Code\\Java\\itm411\\FMP\\data\\population-record.ser");
             ObjectInputStream in = new ObjectInputStream(fileIn);
             recs =(mp2.PersistentObject) 
                     in.readObject();
@@ -86,6 +89,8 @@ public class Program extends JApplet implements ActionListener, Runnable
             this.m_obj_data= new mysql.PopulationTable(recs.getPopulationRecords());
             
             this.m_obj_data.insert();
+            this.m_obj_data.DataBind();
+            
             
             
             /*for(mp2.PopulationRecord rec : recs.getPopulationRecords())
@@ -130,12 +135,17 @@ public class Program extends JApplet implements ActionListener, Runnable
 		System.out.println("Program.start fired.");
 		 /// Create main panel control
         
-        CtrlGrid grid = new CtrlGrid(this.m_obj_data.getDataRows(), 
-        		this.m_obj_data.getHeaderRow());
-        
-    	grid.setOpaque(true); 
-    	//content panes must be opaque         
-    	this.add(grid);
+		JTable table = new JTable(this.m_obj_data.getRows(), this.m_obj_data.getColumns());        
+		TableColumn column;        
+		
+		for (int i = 0; i < table.getColumnCount(); i++) 
+		{   column = table.getColumnModel().getColumn(i);            
+			column.setMaxWidth(250);        
+		}        
+		
+		JScrollPane scrollPane = new JScrollPane(table);
+		
+		this.add(scrollPane);
     
 	} // end:start
 	

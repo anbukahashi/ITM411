@@ -5,23 +5,37 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Vector;
 import java.sql.*;
 
 import mp2.*;
 
+/**
+ * Class intended to virtualize 
+ * the Population_T database table.
+ * 
+ * @author Brady Houseknecht
+ */
 public class PopulationTable 
 {
-
+	 private Vector m_vect_cols;
+	 private Vector m_vect_rows;
 	 private ArrayList<mp2.PopulationRecord> m_col_populationRecords;
 	 /**
 	  * Class Constructor
 	  */
 	 public PopulationTable()
 	 {
-		 this.m_col_populationRecords = new ArrayList<mp2.PopulationRecord>();
 		 
 	 } // end constructor
 	
+	 /**
+	  * Overloaded constructor that will initialize the target Population_T
+	  * table using a collection of PopulationRecords. NOTE - MP2 artifact.
+	  *
+	  * @param populationRecords Collection of PopulationRecords containing data that 
+	  * should used to initialize the table.
+	  */
 	 public PopulationTable(ArrayList<mp2.PopulationRecord> populationRecords)
 	 {
 		 this.m_col_populationRecords = populationRecords;
@@ -32,7 +46,7 @@ public class PopulationTable
 	    {
 	    	System.out.println("Inserting values in Mysql database table!");
 	    	  Connection con = null;
-	    	  String url = "jdbc:mysql://10.40.81.93:3306/";
+	    	  String url = "jdbc:mysql://127.0.0.1:3306/";
 	    	  String db = "itm411db";
 	    	  String driver = "com.mysql.jdbc.Driver";
 	    	  try
@@ -292,14 +306,15 @@ public class PopulationTable
 	 	 * @return two dimensional object array of size [1][n] where
 	 	 * n is based on the rows in the actual Population Table.
 	 	 */
-	 	public synchronized Object[][] getDataRows()
+	 	public synchronized void DataBind()
 	 	{
-	 		  Object[][] result = null;
-	 		  
+	 		  this.m_vect_rows = new Vector();
+	 		  this.m_vect_cols = new Vector();
+	 		
 	 		  ArrayList<Object[]> datarows = new ArrayList<Object[]>();
 	 		  
 			  Connection con = null;
-			  String url = "jdbc:mysql://10.40.81.93:3306/";
+			  String url = "jdbc:mysql://127.0.0.1:3306/";
 			  String db = "itm411db";
 			  String driver = "com.mysql.jdbc.Driver";
 			
@@ -312,37 +327,24 @@ public class PopulationTable
 			      String sql = "SELECT SUMLEV, REGION, DIVISION, STATE, NAME, CENSUS2010POP, ESTIMATESBASE2010, POPESTIMATE2010, POPESTIMATE2011, NPOPCHG_2010, NPOPCHG_2011, BIRTHS2010, BIRTHS2011, DEATHS2010, DEATHS2011, NATURALINC2010, NATURALINC2011, INTERNATIONALMIG2010, INTERNATIONALMIG2011, DOMESTICMIG2010, DOMESTICMIG2011, NETMIG2010, NETMIG2011, RESIDUAL2010, RESIDUAL2011, RBIRTH2011, RDEATH2011, RNATURALINC2011, RINTERNATIONALMIG2011, RDOMESTICMIG2011, RNETMIG2011 FROM population_t";
 				  ResultSet rs;
 				  rs = st.executeQuery(sql);
-			      while(rs.next())
+				  ResultSetMetaData metaData = rs.getMetaData();            
+
+				  int columns = metaData.getColumnCount();            
+				  for (int i = 1; i <= columns; i++) {                
+					this.m_vect_cols.addElement(metaData.getColumnName(i));            
+				  } // end:for            
+				  
+				  while(rs.next())
 				  {
-					 Object[] datarow = {
-							 new Integer(rs.getInt(1)),	new Integer(rs.getInt(2)),	
-							 new Integer(rs.getInt(3)),	rs.getInt(4),	rs.getString(5),	rs.getInt(6),	rs.getInt(7),	rs.getInt(8),	rs.getInt(9),	rs.getInt(10),	rs.getInt(11),	rs.getInt(12),	rs.getInt(13),	rs.getInt(14),	rs.getInt(15),	rs.getInt(16),	rs.getInt(17),	rs.getInt(18),	rs.getInt(19),	rs.getInt(20),	rs.getInt(21),	rs.getInt(22),	rs.getInt(23),	rs.getInt(24),	rs.getInt(25),	rs.getDouble(26),	rs.getDouble(27),	rs.getDouble(28),	rs.getDouble(29),	rs.getDouble(30),	rs.getDouble(31)
-					 }; // end:datarow
-					  
-					 datarows.add(datarow);
-					 
+					  Vector row = new Vector(columns);                
+						for (int i = 1; i <= columns; i++) 
+						{                    
+							row.addElement(rs.getObject(i));                
+						}                
+						this.m_vect_rows.addElement(row);   
 				  } // end:while
 				  rs.close();
-				  
-				  /// Use the arraylist's size
-				  /// attribute to initialize the two
-				  /// two dimensional object array
-				  /// Then populate the second
-				  /// dimension of the result using
-				  /// the contents of the 
-				  /// ArrayList.
-				  result = new Object[datarows.size()][30];
-				  int r = 0;
-				  for(Object[] cells : datarows)
-				  {
-					  int c = 0;
-					  for(Object cell : cells)
-					  {
-						  result[r][c] = cell;
-						  
-					  } // end for
-					  r++;
-				  } // end:for
+				  st.close();
 			  } // end:try
 			  catch (ClassNotFoundException e) {
 					e.printStackTrace();
@@ -351,8 +353,25 @@ public class PopulationTable
 			  {
 				e.printStackTrace();
 			  } // end:catch
-			  
-			  
-			  return result;
-	 	} // end:getDataRows
-}
+	 	} // end:databind
+
+	 	/**
+	 	 * Accessor used to get the Rows Vector.
+	 	 *
+	 	 * @return Vector object populated with rows pulled from Population_T database table.
+	 	 */
+	 	public Vector getRows()
+	 	{
+	 		return this.m_vect_rows;
+	 	} // end:getRows
+	 	
+	 	/**
+	 	 * Accessor used to get the Columns Vector.
+	 	 *
+	 	 * @return Vector object populated with column metadata pulled from the Population_T database table.
+	 	 */
+	 	public Vector getColumns()
+	 	{
+	 		return this.m_vect_cols;
+	 	} // end:getColumns
+} // end:class
